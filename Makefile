@@ -5,11 +5,11 @@ P="\\033[34m[+]\\033[0m"
 
 build:
 	@echo "$(P) build"
-	GO111MODULE=on go build *.go
+	go build -gcflags "all=-N -l" *.go
 
 run:
 	@echo "$(P) run"
-	GO111MODULE=on go run *.go
+	go run *.go
 
 serve:
 	@$(MAKE) server
