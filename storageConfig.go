@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"io/ioutil"
 	"os"
 	"time"
 
@@ -17,17 +16,19 @@ import (
 )
 
 // Command line flag global variables
-var debug bool
-var configFile string
+var (
+	debug      bool
+	configFile string
+)
 
-//NewStreamCore do load config file
+// NewStreamCore do load config file
 func NewStreamCore() *StorageST {
 	flag.BoolVar(&debug, "debug", true, "set debug mode")
 	flag.StringVar(&configFile, "config", "config.json", "config patch (/etc/server/config.json or config.json)")
 	flag.Parse()
 
 	var tmp StorageST
-	data, err := ioutil.ReadFile(configFile)
+	data, err := os.ReadFile(configFile)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"module": "config",
@@ -69,7 +70,7 @@ func NewStreamCore() *StorageST {
 	return &tmp
 }
 
-//ClientDelete Delete Client
+// ClientDelete Delete Client
 func (obj *StorageST) SaveConfig() error {
 	log.WithFields(logrus.Fields{
 		"module": "config",
@@ -90,7 +91,7 @@ func (obj *StorageST) SaveConfig() error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(configFile, res, 0644)
+	err = os.WriteFile(configFile, res, 0644)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"module": "config",
