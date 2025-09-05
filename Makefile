@@ -1,30 +1,32 @@
 APP=RTSPtoWeb
 SERVER_FLAGS ?= -config config.json
 
-P="\\033[34m[+]\\033[0m"
-
 build:
-	@echo "$(P) build"
-	go build -gcflags "all=-N -l" *.go
+	@echo "build"
+	go build -o $(APP) *.go
+
+debug:
+	@echo "debug"
+	go build -gcflags "all=-N -l" -o $(APP)-debug *.go
 
 run:
-	@echo "$(P) run"
+	@echo "run"
 	go run *.go
 
 serve:
 	@$(MAKE) server
 
 server:
-	@echo "$(P) server $(SERVER_FLAGS)"
+	@echo "server $(SERVER_FLAGS)"
 	./${APP} $(SERVER_FLAGS)
 
 test:
-	@echo "$(P) test"
+	@echo "test"
 	bash test.curl
 	bash test_multi.curl
 
 lint:
-	@echo "$(P) lint"
+	@echo "lint"
 	go vet
 
 .NOTPARALLEL:
