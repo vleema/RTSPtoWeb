@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"time"
 
 	"github.com/deepch/vdk/av"
@@ -20,13 +21,13 @@ func (obj *StorageST) StreamChannelMake(val ChannelST) ChannelST {
 			"call":   "mergo.Merge",
 		}).Errorln(err.Error())
 	}
-	//make client's
+	// make client's
 	channel.clients = make(map[string]ClientST)
-	//make last ack
+	// make last ack
 	channel.ack = time.Now().Add(-255 * time.Hour)
-	//make hls buffer
+	// make hls buffer
 	channel.hlsSegmentBuffer = make(map[int]SegmentOld)
-	//make signals buffer chain
+	// make signals buffer chain
 	channel.signals = make(chan int, 100)
 	return channel
 }
@@ -371,16 +372,24 @@ func (obj *StorageST) HLSMuxerClose(uuid string, channelID string) {
 
 // HLSMuxerM3U8 get m3u8 list
 func (obj *StorageST) HLSMuxerM3U8(uuid string, channelID string, msn, part int) (string, error) {
-	obj.mutex.Lock()
-	tmp, ok := obj.Streams[uuid]
-	obj.mutex.Unlock()
-	if ok {
-		if channelTmp, ok := tmp.Channels[channelID]; ok {
-			index, err := channelTmp.hlsMuxer.GetIndexM3u8(msn, part)
-			return index, err
+	for range 50 {
+		obj.mutex.RLock()
+		stream, ok := obj.Streams[uuid]
+		obj.mutex.RUnlock()
+		if !ok {
+			return "", ErrorStreamNotFound
 		}
+		if channelTmp, ok := stream.Channels[channelID]; ok {
+			if channelTmp.hlsMuxer != nil {
+				return channelTmp.hlsMuxer.GetIndexM3u8(msn, part)
+			}
+		} else {
+			return "", ErrorStreamChannelNotFound
+		}
+		time.Sleep(100 * time.Millisecond)
 	}
-	return "", ErrorStreamNotFound
+	// HACK: find a better error instead of errors.New
+	return "", errors.New("HLS Mux not ready after timeout")
 }
 
 // HLSMuxerSegment get segment
