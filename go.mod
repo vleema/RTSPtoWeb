@@ -1,8 +1,6 @@
 module github.com/deepch/RTSPtoWeb
 
-go 1.23.0
-
-toolchain go1.25.0
+go 1.25.0
 
 require (
 	github.com/deepch/vdk v0.0.27
@@ -12,14 +10,12 @@ require (
 	github.com/hashicorp/go-version v1.7.0
 	github.com/imdario/mergo v0.3.16
 	github.com/liip/sheriff v0.12.0
-	github.com/liip/sheriff/v2 v2.0.1
 	github.com/sirupsen/logrus v1.9.3
 )
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
-	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
